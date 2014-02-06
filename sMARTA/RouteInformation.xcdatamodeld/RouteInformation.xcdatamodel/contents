@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3396" systemVersion="12F37" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Routes" representedClassName="Routes" syncable="YES">
+        <attribute name="route_color" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route_desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="route_long_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route_short_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route_text_color" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route_type" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="route_url" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="trip" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Trips" inverseName="route" inverseEntity="Trips" syncable="YES"/>
+    </entity>
+    <entity name="Shapes" representedClassName="Shapes" syncable="YES">
+        <attribute name="shape_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="shape_lat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shape_long" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="shape_sequence" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="trip" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Trips" inverseName="shape" inverseEntity="Trips" syncable="YES"/>
+    </entity>
+    <entity name="Stops" representedClassName="Stops" syncable="YES">
+        <attribute name="stop_code" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="stop_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="stop_lat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stop_lon" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stop_name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="stopTimes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StopTimes" inverseName="stop" inverseEntity="StopTimes" syncable="YES"/>
+    </entity>
+    <entity name="StopTimes" representedClassName="StopTimes" syncable="YES">
+        <attribute name="arrival_time" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="departure_time" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stop_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="stop_sequence" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="trip_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="stop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Stops" inverseName="stopTimes" inverseEntity="Stops" syncable="YES"/>
+        <relationship name="trips" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Trips" inverseName="stopTimes" inverseEntity="Trips" syncable="YES"/>
+    </entity>
+    <entity name="Trips" representedClassName="Trips" syncable="YES">
+        <attribute name="block_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="direction_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="route_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="service_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="shape_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="trip_headsign" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="trip_id" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="route" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Routes" inverseName="trip" inverseEntity="Routes" syncable="YES"/>
+        <relationship name="shape" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shapes" inverseName="trip" inverseEntity="Shapes" syncable="YES"/>
+        <relationship name="stopTimes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StopTimes" inverseName="trips" inverseEntity="StopTimes" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Routes" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Shapes" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Stops" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="StopTimes" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Trips" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
+</model>
