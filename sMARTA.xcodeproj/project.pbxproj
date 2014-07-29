@@ -59,6 +59,7 @@
 		DC9A16BC17E90DC100FA97F6 /* JHBusRouteRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = DC9A16BB17E90DC100FA97F6 /* JHBusRouteRepository.m */; };
 		DCAFF45F17EA3707005899C3 /* RouteInformation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DCE2E7AC17EA296D008A003D /* RouteInformation.xcdatamodeld */; };
 		DCB48D9B18048B980080BD8D /* MMBaseFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = DCB48D9A18048B980080BD8D /* MMBaseFlowLayout.m */; };
+		DCD5B44318C65C900082A488 /* JHHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD5B44218C65C900082A488 /* JHHeaderView.m */; };
 		DCE043F217F38E8B002E88CB /* StopTimes.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE043F117F38E8B002E88CB /* StopTimes.m */; };
 		DCE043F517F38E8C002E88CB /* Shapes.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE043F417F38E8C002E88CB /* Shapes.m */; };
 		DCE043F817F38E8C002E88CB /* Stops.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE043F717F38E8C002E88CB /* Stops.m */; };
@@ -166,6 +167,8 @@
 		DC9A16BB17E90DC100FA97F6 /* JHBusRouteRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHBusRouteRepository.m; sourceTree = "<group>"; };
 		DCB48D9918048B980080BD8D /* MMBaseFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMBaseFlowLayout.h; sourceTree = "<group>"; };
 		DCB48D9A18048B980080BD8D /* MMBaseFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBaseFlowLayout.m; sourceTree = "<group>"; };
+		DCD5B44118C65C900082A488 /* JHHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHHeaderView.h; sourceTree = "<group>"; };
+		DCD5B44218C65C900082A488 /* JHHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHHeaderView.m; sourceTree = "<group>"; };
 		DCE043F017F38E8B002E88CB /* StopTimes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StopTimes.h; sourceTree = "<group>"; };
 		DCE043F117F38E8B002E88CB /* StopTimes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StopTimes.m; sourceTree = "<group>"; };
 		DCE043F317F38E8C002E88CB /* Shapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shapes.h; sourceTree = "<group>"; };
@@ -351,6 +354,8 @@
 				DC7CF37C189DF30C0042376A /* JHStopTimeCalloutView.m */,
 				DC7CF37E189DFD150042376A /* JHStopAnnotationView.h */,
 				DC7CF37F189DFD150042376A /* JHStopAnnotationView.m */,
+				DCD5B44118C65C900082A488 /* JHHeaderView.h */,
+				DCD5B44218C65C900082A488 /* JHHeaderView.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -598,6 +603,7 @@
 				DC3966B517EBE73400B85329 /* UIView+Screenshot.m in Sources */,
 				DC3966B417EBE73400B85329 /* TouchThroughUIView.m in Sources */,
 				DCAFF45F17EA3707005899C3 /* RouteInformation.xcdatamodeld in Sources */,
+				DCD5B44318C65C900082A488 /* JHHeaderView.m in Sources */,
 				DC82901017E8E2D800742873 /* main.m in Sources */,
 				DCF643B2189B1538004B67BF /* MPFlipTransition.m in Sources */,
 				DC3966AF17EBE73400B85329 /* PaperFoldSwipeHintView.m in Sources */,

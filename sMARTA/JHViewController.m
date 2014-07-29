@@ -10,12 +10,14 @@
 #import "Routes.h"
 #import "JHViewController.h"
 #import "JHBusRouteRepository.h"
+#import "JHHeaderView.h"
 #import "JHRouteDetailViewController.h"
 #import "MMBaseFlowLayout.h"
 
 @interface JHViewController ()
 @property (strong, nonatomic) IBOutlet UICollectionView *cvCollection;
-@property (strong, nonatomic) NSMutableArray *routes;
+@property (strong, nonatomic) NSMutableArray *busRoutes;
+@property (strong, nonatomic) NSMutableArray *trainRoutes;
 @end
 
 @implementation JHViewController
@@ -24,8 +26,10 @@
 {
     [super viewDidLoad];
     self.title = @"Routes";
-    self.routes = [[JHBusRouteRepository routeProvider] busRoutes];
+    self.busRoutes = [[JHBusRouteRepository routeProvider] busRoutes];
+    self.trainRoutes = [[JHBusRouteRepository routeProvider] trainRoutes];
     [self.cvCollection registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"Cell"];
+    [self.cvCollection registerClass:[JHHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"JHHeaderView"];
     [self.cvCollection setCollectionViewLayout:[[MMBaseFlowLayout alloc]init]];
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -38,7 +42,35 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [self.routes count];
+    if (section == 0) {
+         return [self.trainRoutes count];
+    }else
+    {
+        return [self.busRoutes count];
+    }
+}
+
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 2;
+}
+
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionReusableView *reusableview = nil;
+
+    if (kind == UICollectionElementKindSectionHeader) {
+        JHHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"JHHeaderView" forIndexPath:indexPath];
+
+        indexPath.section == 0 ? [headerView setHeaderText:@"Trains"]:[headerView setHeaderText:@"Buses"];
+        
+
+        return headerView;
+
+
+    }
+    return reusableview;
 }
 
 
@@ -58,14 +90,37 @@
         }
     }
     
-    Routes *obj = [self.routes objectAtIndex:index];
-    UILabel *lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(6, 6, 308, 20)];
+
+    Routes *obj = nil;
+    
+    if(indexPath.section == 0)
+        obj = [self.trainRoutes objectAtIndex:index];
+    else
+        obj = [self.busRoutes objectAtIndex:index];
+    
+    
+    UILabel *lbl2 = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 60, 50)];
     [lbl2 setText:obj.route_short_name];
+    [lbl2 setTextAlignment:NSTextAlignmentCenter];
+    if (indexPath.section == 0)
+        [lbl2 setFont:[UIFont fontWithName:@"GillSans" size:18.0f]];
+    else
+        [lbl2 setFont:[UIFont fontWithName:@"GillSans" size:28.0f]];
+    
+    
     [cell.contentView addSubview:lbl2];
     
 
-    UILabel *lbl = [[UILabel alloc]initWithFrame:CGRectMake(42, 6, 308, 20)];
-    [lbl setText:obj.route_long_name];
+    UILabel *lbl = [[UILabel alloc]initWithFrame:CGRectMake(70, 0, 224, 50)];
+    [lbl setNumberOfLines:0];
+    [lbl setFont:[UIFont fontWithName:@"GillSans" size:18.0f]];
+    if (indexPath.section == 0) {
+        NSArray *array = [obj.route_long_name componentsSeparatedByString:@"-"];
+        [lbl setText:[array objectAtIndex:1]];
+    }else
+        [lbl setText:obj.route_long_name];
+    
+    
     [cell.contentView addSubview:lbl];
     
     [cell setBackgroundColor:[UIColor whiteColor]];
@@ -77,7 +132,13 @@
 {
     
     JHRouteDetailViewController *routeDetail = [self.storyboard instantiateViewControllerWithIdentifier:@"RouteDetailViewController"];
-    [routeDetail setRouteInfo:self.routes[[indexPath row]]];
+    
+    if(indexPath.section == 0)
+        [routeDetail setRouteInfo:self.trainRoutes[[indexPath row]]];
+    else
+        [routeDetail setRouteInfo:self.busRoutes[[indexPath row]]];
+    
+
     [self.navigationController pushViewController:routeDetail animated:YES];
 }
 @end

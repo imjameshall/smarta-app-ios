@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSNumber * route_type;
 @property (nonatomic, retain) NSString * route_url;
 @property (nonatomic, retain) NSSet *trip;
+@property (nonatomic, readonly) double route_Number;
 @end
 
 @interface Routes (CoreDataGeneratedAccessors)

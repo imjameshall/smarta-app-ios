@@ -16,7 +16,7 @@
 #import <MapKit/MapKit.h>
 #import <UIKit/UIKit.h>
 
-@interface JHRouteDetailViewController : UIViewController<MKMapViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
+@interface JHRouteDetailViewController : UIViewController<MKMapViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UIScrollViewDelegate>
 
 @property (nonatomic,strong) Routes *routeInfo;
 

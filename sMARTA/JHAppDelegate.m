@@ -18,6 +18,13 @@
     // Override point for customization after application launch.
     
     [[JHBusRouteRepository routeProvider] loadData];
+    // set the title text property, color, font, size and so on
+
+    [[UINavigationBar appearance] setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [UIColor blackColor],NSForegroundColorAttributeName,
+      [UIFont fontWithName:@"GillSans" size:18.0], NSFontAttributeName, nil]];
+    
     
     return YES;
 }

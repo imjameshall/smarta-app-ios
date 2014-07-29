@@ -45,6 +45,10 @@
 
 @property (weak,nonatomic) id<MKAnnotation> selectedAnnotation;
 
+@property (strong, nonatomic) UIPageControl *pageControl;
+
+@property BOOL isBus;
+
 
 @property (strong, nonatomic) IBOutlet UIButton *busInfoButton;
 - (IBAction)busInfoButtonPress:(id)sender;
@@ -70,6 +74,8 @@
 -(void)setRouteInfo:(Routes *)info
 {
     _routeInfo = info;
+    
+    self.isBus = _routeInfo.route_type.intValue == 1 ? NO : YES;
 }
 
 - (void)viewDidLoad
@@ -115,11 +121,16 @@
                 NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:currentStop,@"stop",annotation,@"annotation",st.stop.stop_name,@"name",nil];
                 [self.mapStops addObject:dict];
                 [annotation setTitle:st.stop.stop_name];
-                if ([st.trips.direction_id doubleValue] == 0) {
+                if (!self.isBus) {
                     [self.northStops addObject:annotation];
                 }else
                 {
-                    [self.southStops addObject:annotation];
+                    if ([st.trips.direction_id doubleValue] == 0) {
+                        [self.northStops addObject:annotation];
+                    }else
+                    {
+                        [self.southStops addObject:annotation];
+                    }
                 }
             }
         }
@@ -127,7 +138,14 @@
                    
 
     [self createRoute];
-    [self getCurrentBusesForRoute];
+    if (self.isBus) {
+        [self getCurrentBusesForRoute];
+    }else
+    {
+        [self.mapView addAnnotations:self.northStops];
+        [self.detailsView setHidden:YES];
+        [self.mapControlsView setHidden:YES];
+    }
 
     // Do any additional setup after loading the view from its nib.
 }
@@ -163,6 +181,8 @@
                 self.buses = [NSMutableArray array];
                 [self.svBuses superview] == nil ? : [self.svBuses removeFromSuperview] ;
                 self.svBuses = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, 125)];
+                [self.svBuses setShowsHorizontalScrollIndicator:NO];
+                [self.svBuses setDelegate:self];
                 [self.detailsView addSubview:self.svBuses];
                 for (NSMutableDictionary *dict in buses) {
                     MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
@@ -170,26 +190,41 @@
                     [self.mapView addAnnotation:annotation];
                     
                     UIView *busView = [[UIView alloc]initWithFrame:CGRectMake(i * 320, 0, 320, 125)];
-                    UIImageView *iv = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"bus-icon.png"]];
-                    [iv setFrame:CGRectMake(0, 0, iv.image.size.width, iv.image.size.height)];
-                    [busView addSubview:iv];
                     
-                    UITextView *tv = [[UITextView alloc]initWithFrame:CGRectMake(131, 0, 320-131, 125)];
+                    UITextView *tv = [[UITextView alloc]initWithFrame:CGRectMake(6, 0, 308, 125)];
                     int adherence = [dict[@"ADHERENCE"] integerValue];
                     NSString *status = @"ON TIME";
+                    
+                    UIColor *statusColor = [UIColor blackColor];
+                    
                     if (adherence > 0) {
+                        statusColor = [UIColor colorWithRed:85/255.0f green:107/255.0f blue:47/255.0f alpha:1.0f];
                         status = [NSString stringWithFormat:@"%d minutes AHEAD OF SCHEDULE",adherence];
                     }else if(adherence < 0)
                     {
+                        statusColor = [UIColor redColor];
                         status = [NSString stringWithFormat:@"%d minutes BEHIND SCHEDULE",abs(adherence)];
                     }
-                    [tv setText:[NSString stringWithFormat:@"This is bus number %@ heading %@.  It is currently %@. It was last seen at %@ around %@",
+
+                    NSMutableAttributedString * fullText = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"This is bus number %@ heading %@.  It is currently %@. It was last seen at %@ around %@",
                                  dict[@"VEHICLE"],
                                  dict[@"DIRECTION"],
                                  status,
                                  dict[@"TIMEPOINT"],
                                  dict[@"MSGTIME"]]];
+                    
+                    NSString *vehicle = dict[@"VEHICLE"];
+                    NSString *direction = dict[@"DIRECTION"];
+                    
+                    NSInteger statusDest = 19 + vehicle.length + 9 + direction.length + 19;
+                    
+                    [fullText addAttribute:NSForegroundColorAttributeName value:statusColor range:NSMakeRange(statusDest-1, status.length+1)];
+                    
+                    tv.attributedText = fullText;
+                    
+                    [tv setFont:[UIFont fontWithName:@"GillSans" size:16.0f]];
                     [busView addSubview:tv];
+                    
                     
                     UIButton *busInfo = [UIButton buttonWithType:UIButtonTypeCustom];
                     [busInfo setTag:i];
@@ -202,6 +237,13 @@
                     i++;
                     [self.buses addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:dict,@"bus",annotation,@"annotation",nil]];
                 }
+                
+                self.pageControl = [[UIPageControl alloc]initWithFrame:CGRectMake(0, 115, 320, 10)];
+                self.pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
+                self.pageControl.currentPageIndicatorTintColor = [UIColor blackColor];
+                [self.pageControl setNumberOfPages:buses.count];
+                [self.detailsView addSubview:self.pageControl];
+                
                 [self.svBuses setContentSize:CGSizeMake(320 * self.buses.count, 125)];
                 [self.svBuses setPagingEnabled:YES];
             });
@@ -211,8 +253,35 @@
     
 }
 
+-(void)getCurrentTrainsForStop:(NSString *)stopName
+{
+    NSString *tete = [[NSString stringWithFormat:@"http://developer.itsmarta.com/NextTrainService/RestServiceNextTrain.svc/GetNextTrain/%@",stopName] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    NSURL *url = [NSURL URLWithString:tete];
+    
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
-//http://developer.itsmarta.com/NextTrainService/RestServiceNextTrain.svc/GetNextTrain/Georgia%20State
+    [NSURLConnection sendAsynchronousRequest:urlRequest queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         
+         if (error)
+         {
+             //NSLog(@"Error,%@", [error localizedDescription]);
+         }
+         else
+         {
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                NSError *e;
+                                NSMutableArray *buses = [NSJSONSerialization JSONObjectWithData:data options: NSJSONReadingMutableContainers error: &e];
+                                int i = 0;
+                                i++;
+
+                            });
+         }
+     }];
+    
+}
 
 -(void)showBus:(UIButton *)sender
 {
@@ -325,6 +394,11 @@ MKCoordinateRegion coordinateRegionForCoordinates(CLLocationCoordinate2D *coords
     
     NSMutableDictionary *dict = [self.mapStops objectAtIndex:sender.tag];
     Stops *selectedStop = [dict objectForKey:@"stop"];
+    if (!self.isBus) {
+        [self getCurrentTrainsForStop:selectedStop.stop_name];
+        return;
+    }
+
     self.selectedAnnotation = [dict objectForKey:@"annotation"];
 
     
@@ -336,20 +410,23 @@ MKCoordinateRegion coordinateRegionForCoordinates(CLLocationCoordinate2D *coords
     //scrollview is 100tall
     for (StopTimes *st in [selectedStop orderedStopTimes]) {
         UILabel *lbl = [[UILabel alloc]initWithFrame:CGRectMake(xCounter, 25 * yCounter, 80, 25)];
+        lbl.shadowColor = [UIColor blackColor];
+        lbl.shadowOffset = CGSizeMake(1,1);
         
         NSTimeInterval secondsBetween = [[st arrivalTime] timeIntervalSinceDate:[NSDate date]];
         
         if (secondsBetween < 0) {
-            [lbl setBackgroundColor:[UIColor redColor]];
+            [lbl setTextColor:[UIColor redColor]];
         }else if(secondsBetween <= 1200)
         {
-            [lbl setBackgroundColor:[UIColor yellowColor]];
+            [lbl setTextColor:[UIColor colorWithRed:240/255.f green:230/255.f blue:140/255.f alpha:1.0f]];
         }else
         {
-            [lbl setBackgroundColor:[UIColor greenColor]];
+            [lbl setTextColor:[UIColor colorWithRed:46/255.f green:139/255.f blue:87/255.f alpha:1.0f]];
         }
         
-        
+        [lbl setFont:[UIFont fontWithName:@"GillSans" size:16.0f]];
+        [lbl setTextAlignment:NSTextAlignmentCenter];
         [lbl setText:st.arrival_time];
         [self.calloutView.svStopTimes addSubview:lbl];
         yCounter++;
@@ -591,5 +668,12 @@ MKCoordinateRegion coordinateRegionForCoordinates(CLLocationCoordinate2D *coords
     [self.btnNorth setEnabled:NO];
     [self.btnSouth setEnabled:YES];
     [self.showBusStopsButton setHidden:YES];
+}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat pageWidth = scrollView.frame.size.width;
+    float fractionalPage = scrollView.contentOffset.x / pageWidth;
+    NSInteger page = lround(fractionalPage);
+    self.pageControl.currentPage = page;
 }
 @end

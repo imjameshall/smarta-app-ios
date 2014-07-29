@@ -7,6 +7,7 @@
 //
 
 #import "MMBaseFlowLayout.h"
+#import "JHHeaderView.h"
 
 @interface MMBaseFlowLayout()
 
@@ -25,11 +26,12 @@
     
     self.minimumInteritemSpacing = 10;
     self.minimumLineSpacing = 10;
-    self.itemSize = CGSizeMake(300, 75);
+    self.itemSize = CGSizeMake(300, 50);
     self.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
     
     self.dynamicAnimator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
     self.visibleIndexPathsSet = [NSMutableSet set];
+    self.headerReferenceSize = CGSizeMake(325, 50);
     
     return self;
 }
@@ -91,11 +93,16 @@
 }
 
 -(NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
-    return [self.dynamicAnimator itemsInRect:rect];
+    return [super layoutAttributesForElementsInRect:rect];
 }
 
 -(UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
     return [self.dynamicAnimator layoutAttributesForCellAtIndexPath:indexPath];
+}
+
+-(UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.dynamicAnimator layoutAttributesForSupplementaryViewOfKind:kind atIndexPath:indexPath];
 }
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {

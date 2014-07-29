@@ -22,4 +22,12 @@
 @dynamic route_url;
 @dynamic trip;
 
+@synthesize route_Number=_route_Number;
+
+
+-(double)route_Number
+{
+    return [self.route_short_name doubleValue];
+}
+
 @end

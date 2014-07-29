@@ -17,6 +17,7 @@
 @interface JHBusRouteRepository()
 
 @property (nonatomic,strong) NSMutableArray *routes;
+@property (nonatomic,strong) NSMutableArray *tRoutes;
 @property (nonatomic,strong) NSMutableArray *trips;
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -352,17 +353,49 @@ static JHBusRouteRepository *_provider;
                                                   entityForName:@"Routes" inManagedObjectContext:moc];
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         [request setEntity:entityDescription];
-                
+        
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"route_type == 3"];
+        
+        [request setPredicate:pred];
+        
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"route_short_name"  ascending:YES];
+        
+        [request setSortDescriptors:@[sortDescriptor]];
+        
+        NSError *error;
+        NSMutableArray *retArray = [[moc executeFetchRequest:request error:&error] mutableCopy];
+        
+        NSSortDescriptor *nameDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"route_Number" ascending:YES];
+        self.routes = [retArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:nameDescriptor]];
+    }
+    
+    return self.routes;
+
+}
+-(NSMutableArray *)trainRoutes
+{
+    if (self.tRoutes == nil) {
+        
+        NSManagedObjectContext *moc = [self managedObjectContext];
+        NSEntityDescription *entityDescription = [NSEntityDescription
+                                                  entityForName:@"Routes" inManagedObjectContext:moc];
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        [request setEntity:entityDescription];
+        
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"route_type == 1"];
+        
+        [request setPredicate:pred];
+        
         NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"route_long_name"  ascending:YES];
         
         [request setSortDescriptors:@[sortDescriptor]];
         
         NSError *error;
-        self.routes = [[moc executeFetchRequest:request error:&error] mutableCopy];
+        self.tRoutes = [[moc executeFetchRequest:request error:&error] mutableCopy];
     }
     
-    return self.routes;
-
+    return self.tRoutes;
+    
 }
 
 -(NSMutableArray *)routeShape:(NSInteger)routeID

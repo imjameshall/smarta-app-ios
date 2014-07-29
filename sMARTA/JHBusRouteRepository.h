@@ -18,6 +18,7 @@
 -(void)loadData;
 
 -(NSMutableArray *)busRoutes;
+-(NSMutableArray *)trainRoutes;
 -(NSMutableArray *)routeTrips:(NSInteger)routeID;
 -(NSMutableArray *)routeShape:(NSInteger)routeID;
 
