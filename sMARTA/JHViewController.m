@@ -25,7 +25,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"Routes";
+    self.title = @"Publict Transit";
     self.busRoutes = [[JHBusRouteRepository routeProvider] busRoutes];
     self.trainRoutes = [[JHBusRouteRepository routeProvider] trainRoutes];
     [self.cvCollection registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"Cell"];
